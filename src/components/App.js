@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NumberSubmitForm from "./numberSubmitForm.js";
 
 function App() {
@@ -6,8 +6,22 @@ function App() {
     pendingGuess: "",
     latestGuess: "",
     pastGuesses: [],
-    feedback: ""
+    feedback: "",
+    target: Math.floor(Math.random() * 100) + 1
   });
+  useEffect(() => {
+    const validateGuess = () => {
+      let message = guesses.target == guesses.latestGuess ? "Correct!" :
+        guesses.latestGuess < 10 + guesses.target && guesses.latestGuess > guesses.target - 10 ? "Hot" :
+        guesses.latestGuess ? "Cold" : 
+        "Guess a number"
+      setGuesses({
+        ...guesses,
+        feedback: message
+      }) 
+    }
+    validateGuess()
+  }, [guesses.latestGuess])
   const duplicateGuessFeedback = (event) => {
     event.preventDefault()
     setGuesses({
@@ -24,6 +38,7 @@ function App() {
   const handleSubmit = (event) => {
     event.preventDefault();
     setGuesses((guesses) => ({
+      ...guesses,
       pendingGuess: "",
       latestGuess: guesses.pendingGuess,
       pastGuesses: guesses.pastGuesses.concat([guesses.pendingGuess]),
